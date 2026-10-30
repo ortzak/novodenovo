@@ -29,7 +29,7 @@ interface Legenda {
 const RAIO = 11;
 const DIST_MIN = RAIO * 2 + 4;
 
-const RECORTE = { x: 40, y: 84, l: 420, a: 790 };
+const RECORTE = { x: 44, y: 118, l: 400, a: 768 };
 
 @Component({
   selector: 'app-vista-produto',

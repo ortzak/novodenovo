@@ -14,8 +14,13 @@ interface Edicao { id: number | null; tipo: TipoComponente; nome: string; especi
   imports: [FormsModule, VistaProduto],
   template: `
     <div class="cabeca">
-      <p class="suave">Peças exibidas na vista explodida da vitrine. A camada define a ordem, de baixo (1) para cima.</p>
-      <button type="button" class="btn btn-secundario btn-pequeno" (click)="novo()">+ Adicionar peça</button>
+      <p class="suave">Peças exibidas na vista explodida da vitrine. Elas são geradas a partir dos dados do cadastro e
+        acompanham as mudanças (memória, armazenamento, bateria…). Edite uma peça para personalizar a descrição.</p>
+      <div class="botoes-topo">
+        <button type="button" class="btn btn-secundario btn-pequeno" [disabled]="gerando()" (click)="gerar()">
+          {{ gerando() ? 'Gerando…' : 'Gerar a partir do cadastro' }}</button>
+        <button type="button" class="btn btn-secundario btn-pequeno" (click)="novo()">+ Adicionar peça</button>
+      </div>
     </div>
 
     @if (erro()) { <div class="p-aviso erro">{{ erro() }}</div> }
@@ -64,7 +69,10 @@ interface Edicao { id: number | null; tipo: TipoComponente; nome: string; especi
           </table>
         </div>
       } @else {
-        <div class="p-vazio">Nenhuma peça ainda. Sem peças, o botão "Ver por dentro (3D)" não aparece na vitrine.</div>
+        <div class="p-vazio">
+          <span>Nenhuma peça ainda. Sem peças, o botão "Ver por dentro (3D)" não aparece na vitrine.</span>
+          <button type="button" class="btn btn-primario btn-pequeno" [disabled]="gerando()" (click)="gerar()">Gerar peças a partir do cadastro</button>
+        </div>
       }
     </section>
 
@@ -77,7 +85,8 @@ interface Edicao { id: number | null; tipo: TipoComponente; nome: string; especi
   `,
   styles: `
     :host { display: flex; flex-direction: column; gap: 16px; }
-    .cabeca { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; .suave { font-size: 14px; } }
+    .cabeca { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; .suave { font-size: 14px; max-width: 70ch; } }
+    .botoes-topo { display: flex; gap: 10px; flex-wrap: wrap; }
     .edicao { display: flex; flex-direction: column; gap: 14px; }
     .botoes { display: flex; justify-content: flex-end; gap: 10px; }
     .camada {
@@ -100,12 +109,24 @@ export class AbaComponentes {
   readonly nomeTipo = NOME_COMPONENTE;
   readonly edicao = signal<Edicao | null>(null);
   readonly salvando = signal(false);
+  readonly gerando = signal(false);
   readonly erro = signal('');
 
   readonly ordenadas = computed(() => [...this.componentes()].sort((a, b) => b.camada - a.camada));
   readonly urlsFotos = computed(() => this.fotos().map(f => f.url));
   readonly paraVitrine = computed<Componente[]>(() =>
     this.componentes().map(c => ({ ...c, imagemUrl: null })));
+
+  gerar(): void {
+    const qtd = this.componentes().length;
+    if (qtd && !confirm(`Substituir as ${qtd} peças atuais pelas geradas a partir dos dados do cadastro? Descrições personalizadas serão perdidas.`)) return;
+    this.erro.set('');
+    this.gerando.set(true);
+    this.api.gerarComponentes(this.idNotebook()).subscribe({
+      next: l => { this.gerando.set(false); this.edicao.set(null); this.mudou.emit(l); },
+      error: e => { this.gerando.set(false); this.erro.set(mensagemDeErro(e)); },
+    });
+  }
 
   novo(): void {
     this.erro.set('');

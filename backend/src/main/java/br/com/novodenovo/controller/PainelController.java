@@ -88,6 +88,11 @@ public class PainelController {
         return notebooks.adicionarComponente(id, dados);
     }
 
+    @PostMapping("/notebooks/{id}/componentes/gerar")
+    public List<ComponenteAdminDTO> gerarComponentes(@PathVariable int id) {
+        return notebooks.gerarComponentes(id);
+    }
+
     @PutMapping("/componentes/{idComponente}")
     public List<ComponenteAdminDTO> atualizarComponente(@PathVariable int idComponente,
                                                         @Valid @RequestBody ComponenteFormDTO dados) {

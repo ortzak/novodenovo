@@ -96,7 +96,7 @@ export function svgDaPeca(tipo: TipoComponente, quantidade = 1): string {
 }
 
 export const Y_EXPLODIDO: Record<TipoComponente, number> = {
-  TELA: 96, TECLADO: 250,
+  TELA: 134, TECLADO: 250,
   PROCESSADOR: 394, PLACA_VIDEO: 404, COOLER: 386, MEMORIA_RAM: 392, SSD_NVME: 398,
   SSD_SATA: 400, HD: 402, PLACA_WIFI: 396, OUTRO: 410,
   PLACA_MAE: 428, BATERIA: 474, ALTO_FALANTES: 474, CARCACA: 520,

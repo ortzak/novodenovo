@@ -59,6 +59,10 @@ export class PainelApi {
     return this.http.delete<Foto[]>(`${this.api}/fotos/${idFoto}`);
   }
 
+  gerarComponentes(id: number): Observable<ComponenteAdmin[]> {
+    return this.http.post<ComponenteAdmin[]>(`${this.api}/notebooks/${id}/componentes/gerar`, {});
+  }
+
   adicionarComponente(id: number, dados: Omit<ComponenteAdmin, 'id'>): Observable<ComponenteAdmin[]> {
     return this.http.post<ComponenteAdmin[]>(`${this.api}/notebooks/${id}/componentes`, dados);
   }

@@ -161,7 +161,7 @@ export class EditorNotebook {
         this.aplicar(n);
         this.carregando.set(false);
         if (history.state?.criado) {
-          this.sucesso.set('Notebook cadastrado. Agora adicione as fotos e as peças da vista 3D.');
+          this.sucesso.set('Notebook cadastrado. As peças da vista 3D foram geradas a partir dos dados; confira na aba Componentes e adicione as fotos.');
           history.replaceState({ ...history.state, criado: false }, '');
         }
       },

@@ -91,6 +91,7 @@ public class PainelNotebookService {
         n.setCodigo(proximoCodigo());
         aplicar(n, dados, status, dados.valorCompra());
         notebooks.save(n);
+        criarPecas(n, GeradorComponentes.gerar(GeradorComponentes.Dados.de(n)).values());
         return paraDTO(n);
     }
 
@@ -108,7 +109,9 @@ public class PainelNotebookService {
             throw new RegraNegocioException("Use \"Registrar venda\" para marcar o notebook como vendido.");
         }
         BigDecimal custoTotal = dados.valorCompra().add(somaCustos(id));
+        Map<String, GeradorComponentes.Peca> antes = GeradorComponentes.gerar(GeradorComponentes.Dados.de(n));
         aplicar(n, dados, status, custoTotal);
+        sincronizarPecas(n, antes, GeradorComponentes.gerar(GeradorComponentes.Dados.de(n)));
         return paraDTO(n);
     }
 
@@ -117,8 +120,14 @@ public class PainelNotebookService {
         if (vendas.findByNotebookId(id).isPresent()) {
             throw new RegraNegocioException("Notebook vendido não pode ser excluído: ele faz parte do histórico de vendas.");
         }
-        List<String> urls = fotos.findByNotebookIdOrderByOrdemAsc(id).stream().map(FotoNotebook::getUrl).toList();
+        List<FotoNotebook> listaFotos = fotos.findByNotebookIdOrderByOrdemAsc(id);
+        List<String> urls = listaFotos.stream().map(FotoNotebook::getUrl).toList();
+        fotos.deleteAll(listaFotos);
+        componentes.deleteAll(componentes.findByNotebookIdOrderByCamadaAsc(id));
+        custos.deleteAll(custos.findByNotebookIdOrderByDataCustoAscIdAsc(id));
+        n.getUsos().clear();
         notebooks.delete(n);
+        notebooks.flush();
         urls.forEach(armazenamento::apagar);
     }
 
@@ -166,6 +175,14 @@ public class PainelNotebookService {
         List<FotoNotebook> resto = fotos.findByNotebookIdOrderByOrdemAsc(idNotebook);
         if (eraPrincipal && !resto.isEmpty()) resto.get(0).setPrincipal(true);
         return fotosDe(idNotebook);
+    }
+
+    public List<ComponenteAdminDTO> gerarComponentes(int id) {
+        Notebook n = notebook(id);
+        componentes.deleteAll(componentes.findByNotebookIdOrderByCamadaAsc(id));
+        componentes.flush();
+        criarPecas(n, GeradorComponentes.gerar(GeradorComponentes.Dados.de(n)).values());
+        return componentesDe(id);
     }
 
     public List<ComponenteAdminDTO> adicionarComponente(int id, ComponenteFormDTO dados) {
@@ -261,6 +278,47 @@ public class PainelNotebookService {
         List<String> nomes = d.usos() == null ? List.of() : d.usos();
         n.getUsos().clear();
         n.getUsos().addAll(usos.findByNomeIn(nomes));
+    }
+
+    private void criarPecas(Notebook n, Collection<GeradorComponentes.Peca> pecas) {
+        for (GeradorComponentes.Peca p : pecas) {
+            Componente c = new Componente();
+            c.setNotebook(n);
+            c.setTipo(p.tipo());
+            c.setNome(p.nome());
+            c.setEspecificacao(p.especificacao());
+            c.setQuantidade(p.quantidade());
+            c.setCamada(p.camada());
+            componentes.save(c);
+        }
+    }
+
+    private void sincronizarPecas(Notebook n, Map<String, GeradorComponentes.Peca> antes,
+                                  Map<String, GeradorComponentes.Peca> depois) {
+        List<Componente> atuais = componentes.findByNotebookIdOrderByCamadaAsc(n.getId());
+        Set<String> vagasOcupadas = new HashSet<>();
+        boolean temPecaGerada = false;
+        for (Componente c : atuais) {
+            String vaga = GeradorComponentes.vaga(c.getTipo());
+            vagasOcupadas.add(vaga);
+            GeradorComponentes.Peca velha = antes.get(vaga);
+            if (velha == null || velha.tipo() != c.getTipo() || !velha.especificacao().equals(c.getEspecificacao())) continue;
+            temPecaGerada = true;
+            GeradorComponentes.Peca nova = depois.get(vaga);
+            if (nova == null) {
+                componentes.delete(c);
+                continue;
+            }
+            if (c.getNome().equals(velha.nome())) c.setNome(nova.nome());
+            c.setTipo(nova.tipo());
+            c.setEspecificacao(nova.especificacao());
+        }
+        if (!temPecaGerada) return;
+        List<GeradorComponentes.Peca> novas = new ArrayList<>();
+        depois.forEach((vaga, p) -> {
+            if (!vagasOcupadas.contains(vaga) && !antes.containsKey(vaga)) novas.add(p);
+        });
+        criarPecas(n, novas);
     }
 
     private void preencher(Componente c, ComponenteFormDTO d, int camada) {
