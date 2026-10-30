@@ -1,0 +1,75 @@
+:root {
+  --fundo: #F6F5F1;
+  --superficie: #E7E6E1;
+  --branco: #FFFFFF;
+  --texto: #16171A;
+  --texto-suave: #5E6068;
+  --escuro: #25272C;
+  --borda: #C8C6BF;
+  --destaque: #E8A317;
+  --destaque-claro: #FBEFD2;
+  --sucesso: #1A7F45;
+  --sucesso-claro: #DCEEDF;
+  --info: #2F55C8;
+  --info-claro: #E2E8F7;
+  --erro: #A3402F;
+  --erro-claro: #F5E1DC;
+
+  --fonte-titulo: 'Space Grotesk', system-ui, sans-serif;
+  --fonte-texto: 'Inter', system-ui, sans-serif;
+  --fonte-spec: 'JetBrains Mono', ui-monospace, monospace;
+
+  --largura-max: 1280px;
+  --margem: clamp(16px, 5vw, 80px);
+  --raio: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font: 400 16px/1.5 var(--fonte-texto);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--fonte-titulo); margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(30px, 4vw, 40px); line-height: 1.15; font-weight: 700; }
+h2 { font-size: clamp(22px, 2.6vw, 28px); line-height: 1.25; font-weight: 700; }
+h3 { font-size: 20px; line-height: 1.4; font-weight: 500; }
+p { margin: 0; }
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+
+.container {
+  width: 100%;
+  max-width: calc(var(--largura-max) + 2 * var(--margem));
+  margin: 0 auto;
+  padding: 0 var(--margem);
+}
+
+.spec { font-family: var(--fonte-spec); font-weight: 500; font-size: 14px; }
+.rotulo { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--texto-suave); }
+.suave { color: var(--texto-suave); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 24px; border-radius: 8px; border: 1.5px solid transparent;
+  font: 600 16px/24px var(--fonte-texto); text-decoration: none; cursor: pointer;
+  transition: transform .15s ease, filter .15s ease, background-color .15s ease;
+  &:hover { filter: brightness(1.05); transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
+  &:focus-visible { outline: 3px solid var(--info); outline-offset: 2px; }
+  svg { flex: none; }
+}
+.btn-primario { background: var(--destaque); color: var(--texto); }
+.btn-secundario { background: transparent; color: var(--texto); border-color: var(--escuro); }
+.btn-whatsapp { background: var(--sucesso); color: var(--branco); }
+.btn-bloco { width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}

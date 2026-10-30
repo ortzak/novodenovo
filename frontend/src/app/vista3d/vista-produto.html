@@ -1,0 +1,98 @@
+<section class="palco" #palco [class.aberto]="aberto()" [class.compacto]="compacto()"
+         [style.height.px]="compacto() ? null : altura * escala()">
+
+  <header class="topo">
+    <div>
+      <p class="spec rotulo-palco">VISTA DO PRODUTO</p>
+      <p class="dica">
+        @if (aberto()) {
+          Cada peça mostra a especificação e o que foi revisado ou trocado.
+        } @else {
+          Foto real do aparelho. Veja também por dentro, peça por peça.
+        }
+      </p>
+    </div>
+    @if (temPecas()) {
+      <button type="button" class="btn btn-primario" (click)="alternar()" [attr.aria-pressed]="aberto()">
+        {{ aberto() ? 'Voltar para a foto' : 'Ver por dentro (3D)' }}
+      </button>
+    }
+  </header>
+
+  <div class="camada-foto" [attr.aria-hidden]="aberto()">
+    <app-foto-notebook class="foto-grande" [src]="fotos()[fotoAtual()] || null" [alt]="titulo()" />
+    @if (fotos().length > 1) {
+      <div class="miniaturas">
+        @for (f of fotos(); track f; let i = $index) {
+          <button type="button" [class.ativa]="i === fotoAtual()" (click)="fotoAtual.set(i)"
+                  [attr.aria-label]="'Foto ' + (i + 1)">
+            <app-foto-notebook [src]="f" [alt]="''" />
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="area-desenho"
+       [style.height.px]="compacto() ? (aberto() ? recorte.a * escalaCompacta() : 0) : null">
+    <div class="desenho" [style.width.px]="largura" [style.height.px]="altura"
+         [style.transform]="transformDesenho()">
+      @for (p of pecas(); track p.componente.tipo + p.componente.camada) {
+        <img class="peca" [src]="p.url" alt="" aria-hidden="true" [width]="LARGURA_PECA" [height]="ALTURA_PECA"
+             [style.transform]="aberto() ? p.explodido : p.montado"
+             [style.transition-delay]="atraso(p)"
+             [class.apagada]="apagada(p.componente)" />
+      }
+
+      <svg class="marcadores" [attr.viewBox]="'0 0 ' + largura + ' ' + altura"
+           [attr.width]="largura" [attr.height]="altura">
+        @for (l of legendas(); track l.componente.tipo + l.componente.camada) {
+          <g class="marcador" [class.apagada]="apagada(l.componente)" [class.ativa]="destaque() === l.componente.tipo"
+             (mouseenter)="realcar(l.componente)" (mouseleave)="realcar(null)"
+             (click)="realcar(destaque() === l.componente.tipo ? null : l.componente)">
+            <title>{{ l.componente.nome }}: {{ l.componente.especificacao }}</title>
+            @if (movido(l)) {
+              <line [attr.x1]="l.ponto.x" [attr.y1]="l.ponto.y" [attr.x2]="l.marcador.x" [attr.y2]="l.marcador.y" />
+              <circle class="pino" [attr.cx]="l.ponto.x" [attr.cy]="l.ponto.y" r="2.5" />
+            }
+            <circle class="bola" [attr.cx]="l.marcador.x" [attr.cy]="l.marcador.y" r="11" />
+            <text [attr.x]="l.marcador.x" [attr.y]="l.marcador.y" dy="0.35em">{{ l.numero }}</text>
+          </g>
+        }
+      </svg>
+    </div>
+  </div>
+
+  @if (!compacto()) {
+    <ol class="legendas" [style.transform]="'scale(' + escala() + ')'" [style.height.px]="alturaLegendas()"
+        [attr.aria-hidden]="!aberto()">
+      @for (l of legendas(); track l.componente.tipo + l.componente.camada) {
+        <li (mouseenter)="realcar(l.componente)" (mouseleave)="realcar(null)"
+            [class.apagada]="apagada(l.componente)" [class.ativa]="destaque() === l.componente.tipo">
+          <span class="num">{{ l.numero }}</span>
+          <div>
+            <strong>{{ l.componente.nome }}{{ quantidade(l.componente) }}</strong>
+            <span class="spec">{{ l.componente.especificacao }}</span>
+          </div>
+        </li>
+      }
+    </ol>
+  }
+
+  <p class="contagem spec">{{ componentes().length }} peças cadastradas pelo revendedor</p>
+</section>
+
+@if (compacto() && aberto()) {
+  <ol class="lista-pecas">
+    @for (l of legendas(); track l.componente.tipo + l.componente.camada) {
+      <li [class.ativa]="destaque() === l.componente.tipo"
+          (click)="realcar(destaque() === l.componente.tipo ? null : l.componente)">
+        <span class="num">{{ l.numero }}</span>
+        <div>
+          <strong>{{ l.componente.nome }}{{ quantidade(l.componente) }}</strong>
+          <span class="spec">{{ l.componente.especificacao }}</span>
+        </div>
+      </li>
+    }
+  </ol>
+}

@@ -1,0 +1,130 @@
+<section class="hero container">
+  <div class="texto">
+    <p class="spec chamada">CATÁLOGO ATUALIZADO · REVISADOS PEÇA POR PEÇA</p>
+    <h1>Notebooks revisados, com a ficha técnica aberta.</h1>
+    <p class="suave">Escolha, veja cada peça por dentro e chame no WhatsApp. Atendimento online ou no local, como preferir.</p>
+  </div>
+  <ul class="garantias">
+    <li>✓ Garantia de 90 dias</li>
+    <li>✓ Testado peça por peça</li>
+    <li>✓ Atendimento online ou no local</li>
+  </ul>
+</section>
+
+<section class="conteudo container">
+  <button type="button" class="btn btn-secundario abrir-filtros" (click)="filtrosAbertos.set(!filtrosAbertos())"
+          [attr.aria-expanded]="filtrosAbertos()">
+    {{ filtrosAbertos() ? 'Fechar filtros' : 'Filtrar' }}{{ temFiltro() ? ' •' : '' }}
+  </button>
+
+  <aside class="filtros" [class.aberto]="filtrosAbertos()" aria-label="Filtros">
+    <h3>Filtros</h3>
+
+    <fieldset>
+      <legend class="rotulo">Preço</legend>
+      <div class="precos">
+        <label><span>Mín.</span>
+          <input type="number" inputmode="numeric" min="0" step="100" [placeholder]="opcoes()?.precoMinimo ?? ''"
+                 [ngModel]="filtro().precoMin" (ngModelChange)="preco('precoMin', $event)" />
+        </label>
+        <label><span>Máx.</span>
+          <input type="number" inputmode="numeric" min="0" step="100" [placeholder]="opcoes()?.precoMaximo ?? ''"
+                 [ngModel]="filtro().precoMax" (ngModelChange)="preco('precoMax', $event)" />
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend class="rotulo">Marca</legend>
+      @for (m of opcoes()?.marcas ?? []; track m) {
+        <label class="check">
+          <input type="checkbox" [checked]="marcado('marcas', m)" (change)="alternar('marcas', m)" />
+          <span>{{ m }}</span>
+        </label>
+      }
+    </fieldset>
+
+    <fieldset>
+      <legend class="rotulo">Estado</legend>
+      @for (e of opcoes()?.estados ?? []; track e) {
+        <label class="check">
+          <input type="checkbox" [checked]="marcado('estados', e)" (change)="alternar('estados', e)" />
+          <span>{{ rotuloEstado[e] }}</span>
+        </label>
+      }
+    </fieldset>
+
+    <fieldset>
+      <legend class="rotulo">Para que você vai usar?</legend>
+      <div class="chips">
+        @for (u of opcoes()?.usos ?? []; track u) {
+          <button type="button" class="chip" [class.ativo]="marcado('usos', u)" (click)="alternar('usos', u)"
+                  [attr.aria-pressed]="marcado('usos', u)">{{ u }}</button>
+        }
+      </div>
+    </fieldset>
+
+    <button type="button" class="btn btn-secundario btn-bloco" (click)="limpar()" [disabled]="!temFiltro()">
+      Limpar filtros
+    </button>
+  </aside>
+
+  <div class="resultados">
+    <div class="barra">
+      <h3 aria-live="polite">
+        @switch (resultado().estado) {
+          @case ('carregando') { Carregando… }
+          @case ('erro') { Não foi possível carregar }
+          @default { {{ quantidade() }} {{ quantidade() === 1 ? 'notebook à venda' : 'notebooks à venda' }} }
+        }
+      </h3>
+      <label class="ordenar suave">Ordenar por
+        <select [ngModel]="filtro().ordenar" (ngModelChange)="ordenar($event)">
+          <option value="menor_preco">Menor preço</option>
+          <option value="maior_preco">Maior preço</option>
+          <option value="recentes">Mais recentes</option>
+        </select>
+      </label>
+    </div>
+
+    @switch (resultado().estado) {
+      @case ('erro') {
+        <div class="aviso erro">
+          <strong>Não foi possível carregar a vitrine agora.</strong>
+          <p>Tente de novo em alguns instantes ou chame no WhatsApp que mandamos a lista de notebooks.</p>
+        </div>
+      }
+      @case ('ok') {
+        @let r = resultado();
+        @if (r.estado === 'ok' && r.itens.length) {
+          <div class="grade">
+            @for (n of r.itens; track n.codigo) {
+              <app-card-notebook [n]="n" />
+            }
+          </div>
+        } @else {
+          <div class="aviso">
+            <strong>Nenhum notebook com esses filtros.</strong>
+            <p>Tente tirar algum filtro ou <button type="button" class="link" (click)="limpar()">limpar todos</button>.</p>
+          </div>
+        }
+      }
+      @default {
+        <div class="grade">
+          @for (i of [1, 2, 3]; track i) { <div class="esqueleto"></div> }
+        </div>
+      }
+    }
+  </div>
+</section>
+
+<section class="container">
+ <div class="servicos">
+  <div>
+    <p class="spec chamada">SERVIÇOS TÉCNICOS</p>
+    <h2>O seu notebook também merece uma revisão.</h2>
+    <p class="suave">Limpeza interna, manutenção, troca de peças, upgrade de SSD e memória.</p>
+  </div>
+  <a class="btn btn-primario" routerLink="/servicos">Ver serviços</a>
+ </div>
+</section>

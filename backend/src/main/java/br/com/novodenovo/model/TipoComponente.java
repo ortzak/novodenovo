@@ -1,0 +1,5 @@
+package br.com.novodenovo.model;
+
+public enum TipoComponente {
+    CARCACA, BATERIA, ALTO_FALANTES, PLACA_MAE, PROCESSADOR, PLACA_VIDEO, COOLER, MEMORIA_RAM, SSD_NVME, SSD_SATA, HD, PLACA_WIFI, TECLADO, TELA, OUTRO
+}

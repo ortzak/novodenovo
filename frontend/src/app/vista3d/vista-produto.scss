@@ -1,0 +1,128 @@
+:host { display: block; }
+
+.palco {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 1px 1px, #3A3C42 1px, transparent 1.5px) 0 0 / 28px 28px,
+    var(--escuro);
+  color: var(--branco);
+  min-height: 420px;
+}
+
+.topo {
+  position: absolute; z-index: 3; top: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+  padding: 24px 28px;
+  .rotulo-palco { color: var(--destaque); margin-bottom: 4px; }
+  .dica { color: var(--superficie); font-size: 14px; max-width: 46ch; }
+  .btn { flex: none; }
+}
+
+.camada-foto {
+  position: absolute; z-index: 2; inset: 96px 40px 64px;
+  display: flex; flex-direction: column; justify-content: center; gap: 14px;
+  transition: opacity .5s ease, transform .6s ease;
+}
+.foto-grande { width: 100%; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; }
+.miniaturas {
+  display: flex; gap: 12px;
+  button {
+    width: 92px; height: 68px; padding: 0; border: 2px solid transparent; border-radius: 8px;
+    overflow: hidden; cursor: pointer; opacity: .6; background: none;
+    &.ativa { border-color: var(--destaque); opacity: 1; }
+  }
+}
+.aberto .camada-foto { opacity: 0; transform: scale(.92); pointer-events: none; }
+
+.area-desenho { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.desenho {
+  position: absolute; z-index: 1; top: 0; left: 0;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+.peca {
+  position: absolute; top: 0; left: 0;
+  transform-origin: 0 0;
+  opacity: 0;
+  transition: transform .9s cubic-bezier(.65, 0, .25, 1), opacity .45s ease;
+}
+.aberto .peca { opacity: 1; }
+.peca.apagada { opacity: .15 !important; }
+
+.marcadores {
+  position: absolute; inset: 0; overflow: visible;
+  opacity: 0; transition: opacity .4s ease;
+}
+.aberto .marcadores { opacity: 1; transition-delay: .7s; }
+.marcador {
+  pointer-events: none; cursor: pointer; transition: opacity .2s ease;
+  line { stroke: var(--destaque); stroke-width: 1.2; }
+  .pino { fill: var(--destaque); }
+  .bola { fill: var(--destaque); stroke: var(--escuro); stroke-width: 2; transition: r .15s ease; }
+  text { font: 700 12px var(--fonte-spec); fill: var(--escuro); text-anchor: middle; }
+  &.ativa .bola { fill: var(--branco); r: 13; }
+  &.apagada { opacity: .25; }
+}
+.aberto .marcador { pointer-events: auto; }
+
+.legendas {
+  list-style: none; margin: 0; padding: 0;
+  position: absolute; z-index: 2; top: 0; left: 0; width: 800px;
+  padding: 108px 0 0 488px; box-sizing: content-box;
+  display: flex; flex-direction: column; justify-content: space-between;
+  transform-origin: 0 0; pointer-events: none;
+  li {
+    position: relative; width: 290px;
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 4px 8px 4px 4px; margin-left: -4px; border-radius: 8px;
+    opacity: 0; transform: translateX(12px);
+    transition: opacity .35s ease, transform .35s ease, background-color .15s ease;
+    pointer-events: auto; cursor: default;
+    div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    strong { font-size: 15px; font-weight: 600; }
+    .spec { font-size: 12.5px; color: var(--superficie); line-height: 1.4; }
+    &.ativa { background: rgb(255 255 255 / .07); }
+    &.apagada { opacity: .35 !important; }
+  }
+}
+.aberto .legendas li { opacity: 1; transform: none; transition-delay: .75s; }
+.aberto .legendas li.ativa, .aberto .legendas li.apagada { transition-delay: 0s; }
+
+.num {
+  flex: none; width: 22px; height: 22px; border-radius: 50%; margin-top: 1px;
+  display: grid; place-items: center;
+  background: var(--destaque); color: var(--escuro);
+  font: 700 11.5px var(--fonte-spec);
+}
+.ativa .num { background: var(--branco); }
+
+.contagem {
+  position: absolute; z-index: 3; left: 28px; bottom: 18px;
+  font-size: 13px; color: var(--superficie);
+}
+.aberto .contagem { opacity: 0; }
+
+.compacto {
+  display: flex; flex-direction: column;
+  .topo { position: static; flex-direction: column; padding: 20px; .btn { width: 100%; } }
+  .camada-foto { position: relative; inset: auto; margin: 0 20px 20px; aspect-ratio: 4 / 3; }
+  .area-desenho { position: relative; inset: auto; overflow: hidden; }
+  .contagem { position: static; padding: 0 20px 16px; }
+  &.aberto { min-height: 0; padding-bottom: 12px; }
+  &.aberto .camada-foto { display: none; }
+}
+
+.lista-pecas {
+  list-style: none; margin: 16px 0 0; padding: 0;
+  display: grid; gap: 4px;
+  li {
+    display: flex; gap: 12px; align-items: flex-start; padding: 8px; border-radius: 8px; cursor: pointer;
+    div { display: flex; flex-direction: column; min-width: 0; }
+    &.ativa { background: var(--superficie); }
+    .num { background: var(--escuro); color: var(--destaque); }
+    &.ativa .num { background: var(--destaque); color: var(--escuro); }
+  }
+  .spec { color: var(--texto-suave); font-size: 13px; }
+}

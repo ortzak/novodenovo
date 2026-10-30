@@ -1,0 +1,70 @@
+<div class="container">
+  <nav class="trilha suave" aria-label="Você está em">
+    <a routerLink="/">← Catálogo</a>
+    @if (n(); as n) { <span>/</span> <span>{{ n.marca }}</span> <span>/</span> <span>{{ n.modelo }}</span> }
+  </nav>
+
+  @switch (dados().estado) {
+    @case ('carregando') {
+      <div class="principal"><div class="esqueleto palco-vazio"></div><div class="esqueleto info-vazia"></div></div>
+    }
+    @case ('erro') {
+      <div class="aviso">
+        <h2>Este notebook não está mais na vitrine.</h2>
+        <p class="suave">Ele pode ter sido vendido. Veja os outros modelos disponíveis.</p>
+        <a routerLink="/" class="btn btn-primario">Ver catálogo</a>
+      </div>
+    }
+    @default {
+      @if (n(); as n) {
+        <div class="principal">
+          <app-vista-produto [fotos]="n.fotos" [componentes]="n.componentes" [titulo]="n.marca + ' ' + n.modelo" />
+
+          <section class="info" aria-label="Informações">
+            <app-selo-status [status]="n.status" />
+            <p class="spec suave">{{ n.marca.toUpperCase() }} · {{ n.codigo }}</p>
+            <h1>{{ n.modelo }}</h1>
+            <p class="suave">{{ estadoTexto() }}</p>
+            <p class="preco">{{ valor() }}</p>
+            <p class="suave pequeno">Pix, cartão ou dinheiro — combinado direto com o revendedor.</p>
+
+            @if (n.status === 'RESERVADO') {
+              <div class="aviso-reserva">
+                <strong>Reservado{{ reservaAte() ? ' até ' + reservaAte() : '' }}</strong>
+                <p>Se a reserva vencer, ele volta para a vitrine. Chame no WhatsApp para ficar na fila.</p>
+              </div>
+            }
+
+            <a class="btn btn-whatsapp btn-bloco" [href]="whatsapp()" target="_blank" rel="noopener">
+              <app-icone-whatsapp /> Tenho interesse no {{ n.codigo }}
+            </a>
+            <div class="compartilhar">
+              <a class="btn btn-secundario" [href]="compartilhar()" target="_blank" rel="noopener"
+                 (click)="compartilharNativo($event)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/>
+                  <path d="m8.2 10.8 7.6-4.4M8.2 13.2l7.6 4.4"/>
+                </svg>
+                Compartilhar
+              </a>
+              <button type="button" class="btn btn-secundario" (click)="copiarLink()">
+                {{ copiado() ? 'Link copiado ✓' : 'Copiar link' }}
+              </button>
+            </div>
+            <p class="suave pequeno">Atendimento online ou no local. <a routerLink="/como-comprar">Como comprar</a></p>
+
+            @if (n.descricao) { <p class="descricao">{{ n.descricao }}</p> }
+
+            <h3>Ficha técnica</h3>
+            <dl class="ficha">
+              @for (l of ficha(); track l[0]) {
+                <div><dt>{{ l[0] }}</dt><dd class="spec">{{ l[1] }}</dd></div>
+              }
+            </dl>
+          </section>
+        </div>
+      }
+    }
+  }
+</div>

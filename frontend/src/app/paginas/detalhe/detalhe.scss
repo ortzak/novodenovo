@@ -1,0 +1,46 @@
+.trilha {
+  display: flex; gap: 8px; flex-wrap: wrap; padding: 24px 0; font-size: 14px;
+  a { text-decoration: none; &:hover { color: var(--texto); } }
+}
+
+.principal { display: grid; grid-template-columns: minmax(0, 800px) minmax(300px, 1fr); gap: 40px; align-items: start; }
+
+.info {
+  display: flex; flex-direction: column; gap: 14px; align-items: flex-start;
+  position: sticky; top: 96px;
+  .preco { font: 700 clamp(32px, 4vw, 40px)/1.1 var(--fonte-titulo); }
+  .pequeno { font-size: 14px; margin-top: -6px; }
+  .btn-bloco { width: 100%; }
+  h3 { margin-top: 10px; }
+  .descricao { font-size: 15px; }
+  .pequeno a { color: var(--texto); }
+}
+
+.compartilhar {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;
+  .btn { width: 100%; }
+}
+
+.aviso-reserva {
+  width: 100%; padding: 12px 16px; border-radius: 10px; background: var(--info-claro);
+  strong { color: var(--info); }
+  p { font-size: 14px; }
+}
+
+.ficha {
+  width: 100%; margin: 0; border: 1px solid var(--borda); border-radius: 10px; overflow: hidden; background: var(--branco);
+  div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 14px; &:nth-child(even) { background: var(--fundo); } }
+  dt { color: var(--texto-suave); font-size: 14px; }
+  dd { margin: 0; text-align: right; }
+}
+
+.aviso { padding: 48px 0; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+
+.esqueleto { border-radius: 16px; background: var(--superficie); }
+.palco-vazio { aspect-ratio: 8 / 9; }
+.info-vazia { height: 520px; }
+
+@media (max-width: 1000px) {
+  .principal { grid-template-columns: 1fr; }
+  .info { position: static; }
+}
