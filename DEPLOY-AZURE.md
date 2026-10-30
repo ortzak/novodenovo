@@ -41,6 +41,15 @@ A primeira vez demora uns 10 minutos (download das imagens e compilação). Depo
 **Atualizou o código?** Faça `git push` para o GitHub e rode o mesmo comando de novo: ele baixa a
 versão nova e recria os contêineres. Os dados do banco são mantidos.
 
+## Painel do revendedor
+
+Endereço: **https://novodenovo.northcentralus.cloudapp.azure.com/painel** (também pelo link "Área do revendedor" no rodapé).
+
+Usuário inicial: `admin@vitrine.com` / senha `admin123`. **Troque a senha em Configurações** logo no primeiro acesso,
+porque o repositório é público.
+
+As fotos enviadas pelo painel ficam no volume `fotos` do Docker (não se perdem ao atualizar o site).
+
 ## Comandos úteis (dentro da VM, via SSH ou "Executar comando")
 
 ```bash

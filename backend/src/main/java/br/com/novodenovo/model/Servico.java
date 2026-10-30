@@ -26,4 +26,11 @@ public class Servico {
     public String getPrazo() { return prazo; }
     public Integer getOrdem() { return ordem; }
     public Boolean getAtivo() { return ativo; }
+
+    public void setNome(String nome) { this.nome = nome; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public void setPrecoAPartir(BigDecimal precoAPartir) { this.precoAPartir = precoAPartir; }
+    public void setPrazo(String prazo) { this.prazo = prazo; }
+    public void setOrdem(Integer ordem) { this.ordem = ordem; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
 }

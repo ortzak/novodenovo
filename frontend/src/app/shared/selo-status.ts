@@ -7,7 +7,7 @@ import { STATUS } from '../core/textos';
   template: `<span class="selo" [class]="'selo ' + status().toLowerCase()"><i></i>{{ texto() }}</span>`,
   styles: `
     .selo {
-      display: inline-flex; align-items: center; gap: 6px;
+      display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
       padding: 4px 10px; border-radius: 999px;
       font: 600 12px/16px var(--fonte-texto);
       i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }

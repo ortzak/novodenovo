@@ -1,0 +1,40 @@
+package br.com.novodenovo.dto.admin;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+public record NotebookAdminDTO(
+        Integer id,
+        String codigo,
+        String marca,
+        String modelo,
+        String numeroSerie,
+        String processador,
+        Integer memoriaRamGb,
+        Integer armazenamentoGb,
+        String tipoArmazenamento,
+        BigDecimal telaPolegadas,
+        String placaVideo,
+        String sistemaOperacional,
+        String estado,
+        Integer saudeBateria,
+        String marcasUso,
+        String descricao,
+        BigDecimal valorCompra,
+        LocalDate dataCompra,
+        String fornecedor,
+        BigDecimal precoVenda,
+        String status,
+        LocalDateTime reservadoAte,
+        LocalDateTime dataCadastro,
+        List<String> usos,
+        List<FotoDTO> fotos,
+        List<ComponenteAdminDTO> componentes,
+        List<CustoDTO> custos,
+        BigDecimal custosAdicionais,
+        BigDecimal custoTotal,
+        BigDecimal lucroPrevisto,
+        VendaDTO venda
+) {}

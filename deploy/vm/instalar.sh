@@ -35,6 +35,7 @@ else
   echo ".env já existe — mantido"
 fi
 grep -q '^DOMINIO=' .env || echo "DOMINIO=$DOMINIO" >> .env
+grep -q '^JWT_SEGREDO=' .env || echo "JWT_SEGREDO=$(openssl rand -base64 48 | tr -dc 'A-Za-z0-9' | head -c 48)" >> .env
 echo "Domínio: $(grep '^DOMINIO=' .env | cut -d= -f2)"
 
 echo "=== 4/4 Subindo os contêineres (o 1º build demora alguns minutos) ==="

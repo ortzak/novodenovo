@@ -127,4 +127,26 @@ public class Notebook {
     public Set<Uso> getUsos() { return usos; }
     public List<FotoNotebook> getFotos() { return fotos; }
     public List<Componente> getComponentes() { return componentes; }
+
+    public void setCodigo(String codigo) { this.codigo = codigo; }
+    public void setMarca(Marca marca) { this.marca = marca; }
+    public void setModelo(String modelo) { this.modelo = modelo; }
+    public void setNumeroSerie(String numeroSerie) { this.numeroSerie = numeroSerie; }
+    public void setProcessador(String processador) { this.processador = processador; }
+    public void setMemoriaRamGb(Integer memoriaRamGb) { this.memoriaRamGb = memoriaRamGb; }
+    public void setArmazenamentoGb(Integer armazenamentoGb) { this.armazenamentoGb = armazenamentoGb; }
+    public void setTipoArmazenamento(TipoArmazenamento tipoArmazenamento) { this.tipoArmazenamento = tipoArmazenamento; }
+    public void setTelaPolegadas(BigDecimal telaPolegadas) { this.telaPolegadas = telaPolegadas; }
+    public void setPlacaVideo(String placaVideo) { this.placaVideo = placaVideo; }
+    public void setSistemaOperacional(String sistemaOperacional) { this.sistemaOperacional = sistemaOperacional; }
+    public void setEstado(EstadoNotebook estado) { this.estado = estado; }
+    public void setSaudeBateria(Integer saudeBateria) { this.saudeBateria = saudeBateria; }
+    public void setMarcasUso(String marcasUso) { this.marcasUso = marcasUso; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public void setValorCompra(BigDecimal valorCompra) { this.valorCompra = valorCompra; }
+    public void setDataCompra(LocalDate dataCompra) { this.dataCompra = dataCompra; }
+    public void setFornecedor(String fornecedor) { this.fornecedor = fornecedor; }
+    public void setPrecoVenda(BigDecimal precoVenda) { this.precoVenda = precoVenda; }
+    public void setStatus(StatusNotebook status) { this.status = status; }
+    public void setReservadoAte(LocalDateTime reservadoAte) { this.reservadoAte = reservadoAte; }
 }

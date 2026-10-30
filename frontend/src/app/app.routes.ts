@@ -10,6 +10,7 @@ export const routes: Routes = [
   { path: 'como-comprar', title: 'NovoDeNovo · Como comprar',
     loadComponent: () => import('./paginas/como-comprar/como-comprar').then(m => m.ComoComprar) },
   { path: 'loja', redirectTo: 'como-comprar' },
+  { path: 'painel', loadChildren: () => import('./painel/painel.routes').then(m => m.PAINEL_ROTAS) },
   { path: '**', title: 'NovoDeNovo · Página não encontrada',
     loadComponent: () => import('./paginas/nao-encontrada/nao-encontrada').then(m => m.NaoEncontrada) },
 ];

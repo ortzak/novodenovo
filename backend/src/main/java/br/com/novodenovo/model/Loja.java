@@ -27,4 +27,11 @@ public class Loja {
     public String getHorarioAtendimento() { return horarioAtendimento; }
     public String getInstagram() { return instagram; }
     public Integer getGarantiaPadraoDias() { return garantiaPadraoDias; }
+
+    public void setNome(String nome) { this.nome = nome; }
+    public void setWhatsapp(String whatsapp) { this.whatsapp = whatsapp; }
+    public void setAreaAtendimento(String areaAtendimento) { this.areaAtendimento = areaAtendimento; }
+    public void setHorarioAtendimento(String horarioAtendimento) { this.horarioAtendimento = horarioAtendimento; }
+    public void setInstagram(String instagram) { this.instagram = instagram; }
+    public void setGarantiaPadraoDias(Integer garantiaPadraoDias) { this.garantiaPadraoDias = garantiaPadraoDias; }
 }

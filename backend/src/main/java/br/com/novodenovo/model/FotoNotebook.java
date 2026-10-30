@@ -28,4 +28,9 @@ public class FotoNotebook {
     public String getUrl() { return url; }
     public Integer getOrdem() { return ordem; }
     public Boolean getPrincipal() { return principal; }
+
+    public void setNotebook(Notebook notebook) { this.notebook = notebook; }
+    public void setUrl(String url) { this.url = url; }
+    public void setOrdem(Integer ordem) { this.ordem = ordem; }
+    public void setPrincipal(Boolean principal) { this.principal = principal; }
 }

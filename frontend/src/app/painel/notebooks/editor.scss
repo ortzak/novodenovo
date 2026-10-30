@@ -1,0 +1,40 @@
+.titulo { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.abas {
+  display: flex; gap: 28px; border-bottom: 1px solid var(--borda); align-items: center; overflow-x: auto;
+  button {
+    background: none; border: 0; padding: 10px 0; margin-bottom: -1px; cursor: pointer; white-space: nowrap;
+    font: 600 15px var(--fonte-texto); color: var(--texto-suave); border-bottom: 2px solid transparent;
+    &.ativa { color: var(--texto); border-bottom-color: var(--destaque); }
+    &:disabled { opacity: .4; cursor: default; }
+  }
+  .dica { font-size: 13px; color: var(--texto-suave); margin-left: auto; white-space: nowrap; }
+}
+.corpo { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; }
+.principal { display: flex; flex-direction: column; gap: 28px; }
+section { display: flex; flex-direction: column; gap: 14px; }
+.usos { gap: 10px; }
+.lateral { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 24px; }
+.pequeno { font-size: 13px; }
+dl {
+  margin: 12px 0 0; display: flex; flex-direction: column; gap: 10px;
+  div { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 14px; }
+  dt { color: var(--texto-suave); }
+  dd { margin: 0; font-family: var(--fonte-spec); text-align: right; }
+  .forte dt, .forte dd { color: var(--texto); font-weight: 700; }
+  .lucro dt, .lucro dd { color: var(--sucesso); font-weight: 700; }
+  .lucro.negativo dt, .lucro.negativo dd { color: var(--erro); }
+  .preco input {
+    width: 130px; padding: 7px 10px; border: 1px solid var(--borda); border-radius: 8px; text-align: right;
+    font: 600 15px var(--fonte-spec);
+    &:focus { outline: 2px solid var(--info); border-color: transparent; }
+  }
+  a { color: var(--info); }
+}
+.resumo .p-aviso { margin-top: 14px; }
+.status { display: flex; flex-direction: column; gap: 14px; }
+.venda { display: flex; flex-direction: column; gap: 10px; }
+.excluir { align-self: flex-start; }
+@media (max-width: 1100px) {
+  .corpo { grid-template-columns: 1fr; }
+  .lateral { position: static; }
+}

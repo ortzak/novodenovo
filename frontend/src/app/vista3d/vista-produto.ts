@@ -112,6 +112,7 @@ export class VistaProduto {
     : `scale(${this.escala()})`);
 
   realcar(c: Componente | null): void {
+    if (c && !this.aberto()) return;
     this.destaque.set(c ? c.tipo : null);
   }
 

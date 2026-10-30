@@ -7,7 +7,7 @@ RUN mvn -q -B -DskipTests package
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-RUN useradd --system --no-create-home novodenovo
+RUN useradd --system --no-create-home novodenovo && mkdir -p /dados/fotos && chown novodenovo /dados/fotos
 COPY --from=build /app/target/novodenovo-api-*.jar app.jar
 USER novodenovo
 EXPOSE 8080

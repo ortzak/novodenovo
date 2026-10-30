@@ -1,10 +1,11 @@
-import { Component, input, signal, effect } from '@angular/core';
+import { Component, computed, effect, input, signal } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-foto-notebook',
   template: `
     @if (src() && !falhou()) {
-      <img [src]="src()" [alt]="alt()" loading="lazy" (error)="falhou.set(true)" />
+      <img [src]="url()" [alt]="alt()" loading="lazy" (error)="falhou.set(true)" />
     } @else {
       <div class="vazio" role="img" [attr.aria-label]="alt() || 'Foto do notebook'">
         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -32,6 +33,10 @@ export class FotoNotebook {
   readonly src = input<string | null>(null);
   readonly alt = input('');
   readonly falhou = signal(false);
+  readonly url = computed(() => {
+    const s = this.src();
+    return s && s.startsWith('/fotos/') ? environment.arquivosUrl + s : s;
+  });
 
   constructor() {
     effect(() => { this.src(); this.falhou.set(false); });

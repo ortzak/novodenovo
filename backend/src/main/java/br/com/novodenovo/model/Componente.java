@@ -41,4 +41,12 @@ public class Componente {
     public Integer getQuantidade() { return quantidade; }
     public String getImagemUrl() { return imagemUrl; }
     public Integer getCamada() { return camada; }
+
+    public void setNotebook(Notebook notebook) { this.notebook = notebook; }
+    public void setTipo(TipoComponente tipo) { this.tipo = tipo; }
+    public void setNome(String nome) { this.nome = nome; }
+    public void setEspecificacao(String especificacao) { this.especificacao = especificacao; }
+    public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
+    public void setImagemUrl(String imagemUrl) { this.imagemUrl = imagemUrl; }
+    public void setCamada(Integer camada) { this.camada = camada; }
 }

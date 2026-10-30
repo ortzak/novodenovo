@@ -73,3 +73,83 @@ img { max-width: 100%; display: block; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+.p-pagina { padding: 32px clamp(16px, 3vw, 40px) 48px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.p-topo {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  h1 { font-size: clamp(24px, 3vw, 32px); }
+  .suave { font-size: 14px; margin-top: 4px; }
+  .acoes { display: flex; gap: 12px; flex-wrap: wrap; }
+}
+.p-voltar { font-size: 14px; color: var(--texto-suave); text-decoration: none; &:hover { color: var(--texto); } }
+.p-cartao {
+  background: var(--branco); border: 1px solid var(--borda); border-radius: var(--raio); padding: 20px 24px;
+  h2 { font-size: 20px; font-weight: 500; }
+  h3 { font-size: 17px; font-weight: 600; }
+}
+.p-cartao.sem-borda-interna { padding: 0; overflow: hidden; }
+.p-tabela-rolagem { overflow-x: auto; }
+.p-tabela {
+  width: 100%; border-collapse: collapse; font-size: 14px;
+  th {
+    text-align: left; padding: 12px 14px; white-space: nowrap;
+    font: 600 11.5px/1.2 var(--fonte-texto); letter-spacing: .04em; text-transform: uppercase; color: var(--texto-suave);
+    background: var(--fundo);
+  }
+  td { padding: 12px 14px; border-top: 1px solid var(--superficie); vertical-align: middle; white-space: nowrap; }
+  td.quebra { white-space: normal; min-width: 170px; }
+  tbody tr:nth-child(even) td { background: #FBFAF7; }
+  tbody tr.clicavel { cursor: pointer; &:hover td { background: var(--destaque-claro); } }
+  .num { font-family: var(--fonte-spec); white-space: nowrap; }
+  .direita { text-align: right; }
+  .forte { font-weight: 600; }
+}
+.p-lucro { color: var(--sucesso); font-family: var(--fonte-spec); white-space: nowrap; }
+.p-prejuizo { color: var(--erro); font-family: var(--fonte-spec); white-space: nowrap; }
+.p-link {
+  background: none; border: 0; padding: 0; cursor: pointer; font: 600 13px var(--fonte-texto);
+  color: var(--info); text-decoration: none; white-space: nowrap;
+  &:hover { text-decoration: underline; }
+  &.verde { color: var(--sucesso); }
+  &.vermelho { color: var(--erro); }
+  &[disabled] { opacity: .4; cursor: default; text-decoration: none; }
+}
+.p-acoes { display: flex; gap: 14px; align-items: center; }
+
+.p-grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.p-grade.duas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.p-campo {
+  display: flex; flex-direction: column; gap: 6px; min-width: 0;
+  > span { font-size: 12.5px; font-weight: 600; color: var(--texto-suave); }
+  input, select, textarea {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--borda); border-radius: 8px;
+    font: 400 15px var(--fonte-texto); color: var(--texto); background: var(--branco);
+    &:focus { outline: 2px solid var(--info); border-color: transparent; }
+    &:disabled { background: var(--fundo); color: var(--texto-suave); }
+  }
+  textarea { resize: vertical; min-height: 84px; }
+  &.inteiro { grid-column: 1 / -1; }
+  .ajuda { font-size: 12px; color: var(--texto-suave); font-weight: 400; }
+}
+.p-campo.invalido input, .p-campo.invalido select { border-color: var(--erro); }
+
+.p-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.p-chip {
+  padding: 6px 14px; border-radius: 999px; border: 1px solid var(--borda); background: var(--branco);
+  font: 600 13px/18px var(--fonte-texto); color: var(--texto); cursor: pointer;
+  &.ativo { background: var(--escuro); color: var(--branco); border-color: var(--escuro); }
+}
+
+.p-aviso {
+  padding: 12px 16px; border-radius: 10px; font-size: 14px;
+  strong { display: block; margin-bottom: 2px; }
+  &.erro { background: var(--erro-claro); color: var(--erro); }
+  &.aviso { background: var(--destaque-claro); color: #6B4A00; }
+  &.info { background: var(--info-claro); color: var(--info); }
+  &.sucesso { background: var(--sucesso-claro); color: var(--sucesso); }
+}
+.p-vazio { padding: 40px 24px; text-align: center; color: var(--texto-suave); display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.p-carregando { padding: 40px; text-align: center; color: var(--texto-suave); }
+.btn-pequeno { padding: 8px 16px; font-size: 14px; line-height: 20px; }
+.btn-perigo { background: var(--erro); color: var(--branco); }
+.btn[disabled] { opacity: .5; cursor: default; transform: none; filter: none; }

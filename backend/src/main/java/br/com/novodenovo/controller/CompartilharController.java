@@ -73,7 +73,8 @@ public class CompartilharController {
 
     private String imagem(NotebookDetalheDTO n) {
         return n.fotos().stream()
-                .filter(f -> f.startsWith("https://"))
+                .filter(f -> f.startsWith("https://") || f.startsWith("/fotos/"))
+                .map(f -> f.startsWith("/") ? site + f : f)
                 .findFirst()
                 .orElse(site + "/img/compartilhar.jpg");
     }

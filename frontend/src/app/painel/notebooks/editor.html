@@ -1,0 +1,204 @@
+<div class="p-pagina">
+  <a class="p-voltar" routerLink="/painel/notebooks">← Notebooks</a>
+
+  <header class="p-topo">
+    <div class="titulo">
+      @if (notebook(); as n) {
+        <h1>{{ n.codigo }} · {{ n.modelo }}</h1>
+        <app-selo-status [status]="n.status" />
+      } @else if (novo()) {
+        <h1>Novo notebook</h1>
+      } @else {
+        <h1>Carregando…</h1>
+      }
+    </div>
+    <div class="acoes">
+      @if (notebook(); as n) {
+        @if (n.status === 'DISPONIVEL' || n.status === 'RESERVADO') {
+          <a class="btn btn-secundario" [href]="'/notebook/' + n.codigo" target="_blank" rel="noopener">Ver na vitrine</a>
+          <button type="button" class="btn btn-whatsapp" (click)="vendendo.set(true)">Registrar venda</button>
+        }
+      }
+      @if (aba() === 'dados') {
+        <button type="submit" form="form-notebook" class="btn btn-primario" [disabled]="salvando() || carregando()">
+          {{ salvando() ? 'Salvando…' : novo() ? 'Cadastrar' : 'Salvar' }}
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (erro()) { <div class="p-aviso erro" role="alert">{{ erro() }}</div> }
+  @if (sucesso()) { <div class="p-aviso sucesso" role="status">{{ sucesso() }}</div> }
+
+  <nav class="abas" role="tablist">
+    <button type="button" role="tab" [class.ativa]="aba() === 'dados'" (click)="aba.set('dados')">Dados</button>
+    <button type="button" role="tab" [class.ativa]="aba() === 'fotos'" [disabled]="!notebook()" (click)="aba.set('fotos')">
+      Fotos ({{ notebook()?.fotos?.length ?? 0 }})</button>
+    <button type="button" role="tab" [class.ativa]="aba() === 'componentes'" [disabled]="!notebook()" (click)="aba.set('componentes')">
+      Componentes ({{ notebook()?.componentes?.length ?? 0 }})</button>
+    <button type="button" role="tab" [class.ativa]="aba() === 'custos'" [disabled]="!notebook()" (click)="aba.set('custos')">
+      Custos ({{ notebook()?.custos?.length ?? 0 }})</button>
+    @if (novo()) { <span class="dica">Cadastre os dados primeiro para liberar fotos, peças e custos.</span> }
+  </nav>
+
+  @switch (aba()) {
+    @case ('fotos') {
+      <app-aba-fotos [idNotebook]="notebook()!.id" [fotos]="notebook()!.fotos" (mudou)="atualizarLista('fotos', $event)" />
+    }
+    @case ('componentes') {
+      <app-aba-componentes [idNotebook]="notebook()!.id" [componentes]="notebook()!.componentes"
+                           [fotos]="notebook()!.fotos" [titulo]="notebook()!.marca + ' ' + notebook()!.modelo"
+                           (mudou)="atualizarLista('componentes', $event)" />
+    }
+    @case ('custos') {
+      <app-aba-custos [idNotebook]="notebook()!.id" [custos]="notebook()!.custos" [travado]="vendido()"
+                      (mudou)="atualizarLista('custos', $event)" />
+    }
+    @default {
+      <form id="form-notebook" class="corpo" (ngSubmit)="salvar()">
+        <div class="p-cartao principal">
+          <section>
+            <h2>Identificação</h2>
+            <div class="p-grade">
+              <label class="p-campo"><span>Código</span>
+                <input [value]="notebook()?.codigo ?? 'automático'" disabled /></label>
+              <label class="p-campo"><span>Marca</span>
+                <input name="marca" [(ngModel)]="f.marca" list="lista-marcas" required maxlength="40" />
+                <datalist id="lista-marcas">@for (m of opcoes().marcas; track m) { <option [value]="m"></option> }</datalist></label>
+              <label class="p-campo"><span>Modelo</span>
+                <input name="modelo" [(ngModel)]="f.modelo" required maxlength="100" /></label>
+              <label class="p-campo"><span>Número de série</span>
+                <input name="serie" [(ngModel)]="f.numeroSerie" required maxlength="40" /></label>
+            </div>
+          </section>
+
+          <section>
+            <h2>Configuração</h2>
+            <div class="p-grade">
+              <label class="p-campo"><span>Processador</span>
+                <input name="cpu" [(ngModel)]="f.processador" required maxlength="80" placeholder="ex.: Intel Core i5-1235U" /></label>
+              <label class="p-campo"><span>Memória RAM (GB)</span>
+                <input name="ram" type="number" min="1" [(ngModel)]="f.memoriaRamGb" required /></label>
+              <label class="p-campo"><span>Armazenamento (GB)</span>
+                <input name="disco" type="number" min="1" [(ngModel)]="f.armazenamentoGb" required /></label>
+              <label class="p-campo"><span>Tipo de armazenamento</span>
+                <select name="tipoDisco" [(ngModel)]="f.tipoArmazenamento">
+                  @for (a of armazenamentos; track a.valor) { <option [value]="a.valor">{{ a.rotulo }}</option> }
+                </select></label>
+              <label class="p-campo"><span>Tela (pol.)</span>
+                <input name="tela" type="number" min="7" max="21" step="0.1" [(ngModel)]="f.telaPolegadas" required /></label>
+              <label class="p-campo"><span>Placa de vídeo <span class="ajuda">(se tiver)</span></span>
+                <input name="gpu" [(ngModel)]="f.placaVideo" maxlength="80" /></label>
+              <label class="p-campo"><span>Sistema</span>
+                <input name="so" [(ngModel)]="f.sistemaOperacional" maxlength="40" /></label>
+            </div>
+          </section>
+
+          <section>
+            <h2>Estado e uso</h2>
+            <div class="p-grade">
+              <label class="p-campo"><span>Estado</span>
+                <select name="estado" [(ngModel)]="f.estado">
+                  @for (e of estados; track e.valor) { <option [value]="e.valor">{{ e.rotulo }}</option> }
+                </select></label>
+              @if (f.estado !== 'NOVO') {
+                <label class="p-campo"><span>Saúde da bateria (%)</span>
+                  <input name="bateria" type="number" min="0" max="100" [(ngModel)]="f.saudeBateria" required /></label>
+                <label class="p-campo inteiro"><span>Marcas de uso</span>
+                  <input name="marcas" [(ngModel)]="f.marcasUso" required maxlength="255" placeholder="ex.: riscos leves na tampa" /></label>
+              }
+            </div>
+            <div class="p-campo usos">
+              <span>Indicado para</span>
+              <div class="p-chips">
+                @for (u of opcoes().usos; track u) {
+                  <button type="button" class="p-chip" [class.ativo]="usoMarcado(u)" (click)="alternarUso(u)">{{ u }}</button>
+                }
+              </div>
+            </div>
+            <label class="p-campo"><span>Descrição na vitrine <span class="ajuda">(opcional)</span></span>
+              <textarea name="descricao" [(ngModel)]="f.descricao" maxlength="2000"></textarea></label>
+          </section>
+
+          <section>
+            <h2>Compra</h2>
+            <div class="p-grade">
+              <label class="p-campo"><span>Valor de compra (R$)</span>
+                <input name="compra" type="number" min="0" step="0.01" [(ngModel)]="f.valorCompra" required /></label>
+              <label class="p-campo"><span>Data da compra</span>
+                <input name="dataCompra" type="date" [(ngModel)]="f.dataCompra" required /></label>
+              <label class="p-campo"><span>Fornecedor <span class="ajuda">(opcional)</span></span>
+                <input name="fornecedor" [(ngModel)]="f.fornecedor" maxlength="100" /></label>
+            </div>
+          </section>
+        </div>
+
+        <aside class="lateral">
+          <div class="p-cartao resumo">
+            <h2>Resumo financeiro</h2>
+            <p class="suave pequeno">Visível só no painel, nunca na vitrine.</p>
+            <dl>
+              <div><dt>Valor de compra</dt><dd>{{ moeda(f.valorCompra) }}</dd></div>
+              <div><dt>Custos adicionais</dt><dd>+ {{ moeda(custosAdicionais) }}</dd></div>
+              <div class="forte"><dt>Custo total</dt><dd>{{ moeda(custoTotal) }}</dd></div>
+              <div class="preco">
+                <dt><label for="preco">Preço de venda</label></dt>
+                <dd><input id="preco" name="preco" type="number" min="0.01" step="0.01" [(ngModel)]="f.precoVenda" required /></dd>
+              </div>
+              <div class="lucro" [class.negativo]="lucroPrevisto < 0">
+                <dt>{{ lucroPrevisto < 0 ? 'Prejuízo previsto' : 'Lucro previsto' }}</dt><dd>{{ moeda(lucroPrevisto) }}</dd>
+              </div>
+            </dl>
+            @if (abaixoDoCusto) {
+              <div class="p-aviso aviso"><strong>Preço abaixo do custo</strong>Ao salvar, o sistema pede confirmação.</div>
+            }
+          </div>
+
+          <div class="p-cartao status">
+            <h2>Status</h2>
+            @if (vendido()) {
+              <p>Vendido. Para mudar o status, desfaça a venda.</p>
+            } @else {
+              <label class="p-campo"><span>Status atual</span>
+                <select name="status" [(ngModel)]="f.status">
+                  @for (s of statusEditaveis; track s) { <option [value]="s">{{ nomeStatus[s] }}</option> }
+                </select>
+                <span class="ajuda">Disponível e Reservado aparecem na vitrine.</span></label>
+              @if (f.status === 'RESERVADO') {
+                <label class="p-campo"><span>Reservado até (obrigatório)</span>
+                  <input name="reserva" type="datetime-local" [(ngModel)]="f.reservadoAte" required /></label>
+              }
+            }
+          </div>
+
+          @if (notebook()?.venda; as v) {
+            <div class="p-cartao venda">
+              <h2>Venda</h2>
+              <dl>
+                <div><dt>Data</dt><dd>{{ diaHora(v.dataVenda) }}</dd></div>
+                <div><dt>Cliente</dt><dd>{{ v.clienteNome }}</dd></div>
+                <div><dt>Telefone</dt><dd><a [href]="'https://wa.me/' + v.clienteTelefone" target="_blank" rel="noopener">{{ fone(v.clienteTelefone) }}</a></dd></div>
+                <div><dt>Pagamento</dt><dd>{{ pagamento[v.formaPagamento] }}{{ v.parcelas > 1 ? ' em ' + v.parcelas + 'x' : '' }} · {{ canal[v.canal] }}</dd></div>
+                <div class="forte"><dt>Valor final</dt><dd>{{ moeda(v.valorFinal) }}</dd></div>
+                <div class="lucro" [class.negativo]="v.lucro < 0"><dt>Lucro</dt><dd>{{ moeda(v.lucro) }}</dd></div>
+                @if (v.garantiaFim) { <div><dt>Garantia até</dt><dd>{{ dia(v.garantiaFim) }}</dd></div> }
+              </dl>
+              @if (v.observacao) { <p class="suave pequeno">{{ v.observacao }}</p> }
+              <button type="button" class="p-link vermelho" (click)="desfazerVenda()">Desfazer venda</button>
+            </div>
+          }
+
+          @if (notebook() && !vendido()) {
+            <button type="button" class="p-link vermelho excluir" (click)="excluir()">Excluir notebook</button>
+          }
+        </aside>
+      </form>
+    }
+  }
+</div>
+
+@if (vendendo() && notebook(); as n) {
+  <app-venda-modal [idNotebook]="n.id" [titulo]="n.codigo + ' · ' + n.marca + ' ' + n.modelo"
+                   [precoVenda]="n.precoVenda!" [custoTotal]="n.custoTotal"
+                   (fechar)="vendendo.set(false)" (vendido)="aoVender()" />
+}
